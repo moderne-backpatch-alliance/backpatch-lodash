@@ -1,0 +1,21 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 3.10.2-backpatch-00001
+baseline: v3.10.1+backpatch.baseline
+fixes:
+  - cve: CVE-2021-23337
+    upstream_fix_url: https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2021-23337
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-lodash/commit/b697d68
+    basis: adapted
+    artifacts:
+      - lodash
+    note: "New in this release; upstream's fix in 4.17.21, adapted to 3.10.1. It closes the advisory: Command Injection in lodash."
+tests:
+  commit: b697d6880d4c34dc1864f2b16260a064d08b8665
+  command: "npm pack --ignore-scripts, then node test/test.js <packed index.js> in the verify harness, one JUnit test per command from its exit status and its FAIL: 0 summary"
+  runtime: Node.js v22.16.0, macOS 27.2 arm64
+  report: lodash-3.10.2-backpatch-00001-tests.zip
+  report_sha256: 751a627428d3804386347ef719346da2964eaed0f03a216174e67e1fd536a73f
+  result: pass
+  note: "lodash 3.10's own test/test.js (the 3.10.1 source tag's QUnit suite, in the verify harness) on the packed index.js, and our regression test cve-2021-23337.js at the tested commit: 1 tests, 1 passed, 0 failed, 0 skipped. The CVE tests (harness/test/cve-2021-23337.js), with this release's production lines reverted at the tested commit: 1 tests, 0 passed, 1 failed, 0 skipped; with them: 1 tests, 1 passed, 0 failed, 0 skipped. Built with no build step (the npm branch is generated), npm pack --ignore-scripts in a directory named lodash, 418 of npmjs's 421 files for 3.10.1 are identical; the rest are index.js, package.json, string/template.js. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
