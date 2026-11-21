@@ -1,5 +1,4 @@
-var assignInWith = require('./assignInWith'),
-    attempt = require('./attempt'),
+var attempt = require('./attempt'),
     baseValues = require('./_baseValues'),
     customDefaultsAssignIn = require('./_customDefaultsAssignIn'),
     escapeStringChar = require('./_escapeStringChar'),
@@ -11,7 +10,8 @@ var assignInWith = require('./assignInWith'),
     toString = require('./toString');
 
 /** Error message constants. */
-var INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`';
+var INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`',
+    INVALID_TEMPL_IMPORTS_ERROR_TEXT = 'Invalid `imports` option passed into `_.template`';
 
 /** Used to match empty string literals in compiled template source. */
 var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -162,11 +162,17 @@ function template(string, options, guard) {
     options = undefined;
   }
   string = toString(string);
-  options = assignInWith({}, options, settings, customDefaultsAssignIn);
+  options = assignWith({}, options, settings, customDefaultsAssignIn);
 
-  var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
+  var imports = assignWith({}, options.imports, settings.imports, customDefaultsAssignIn),
       importsKeys = keys(imports),
       importsValues = baseValues(imports, importsKeys);
+
+  arrayEach(importsKeys, function(key) {
+    if (reForbiddenIdentifierChars.test(key)) {
+      throw new Error(INVALID_TEMPL_IMPORTS_ERROR_TEXT);
+    }
+  });
 
   var isEscaping,
       isEvaluating,
