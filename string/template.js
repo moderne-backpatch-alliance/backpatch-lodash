@@ -11,6 +11,9 @@ var assignOwnDefaults = require('../internal/assignOwnDefaults'),
     reInterpolate = require('../internal/reInterpolate'),
     templateSettings = require('./templateSettings');
 
+/** Used as the `Error` message for an invalid `variable` option of `_.template`. */
+var INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`';
+
 /** Used to match empty string literals in compiled template source. */
 var reEmptyStringLeading = /\b__p \+= '';/g,
     reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
@@ -18,6 +21,9 @@ var reEmptyStringLeading = /\b__p \+= '';/g,
 
 /** Used to match [ES template delimiters](http://ecma-international.org/ecma-262/6.0/#sec-template-literal-lexical-components). */
 var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
+
+/** Used to match characters forbidden in the `variable` option of `_.template`. */
+var reForbiddenIdentifierChars = /[()=,{}\[\]\/\s]/;
 
 /** Used to ensure capturing order of template delimiters. */
 var reNoMatch = /($^)/;
@@ -186,6 +192,10 @@ function template(string, options, otherOptions) {
   if (!variable) {
     source = 'with (obj) {\n' + source + '\n}\n';
   }
+  else if (reForbiddenIdentifierChars.test(variable)) {
+    throw new Error(INVALID_TEMPL_VAR_ERROR_TEXT);
+  }
+
   // Cleanup code by stripping empty strings.
   source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
     .replace(reEmptyStringMiddle, '$1')
