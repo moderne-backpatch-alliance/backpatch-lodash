@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 4.17.24-backpatch-00001
+release: 4.17.24-backpatch-00002
 baseline: v4.17.23+backpatch.baseline
 fixes:
   - cve: CVE-2026-4800
@@ -10,12 +10,20 @@ fixes:
     basis: backport
     artifacts:
       - lodash
-    note: "New in this release; upstream's fix in 4.18.0 (879aaa9, 4f0e376, bbcb8a0). It closes the advisory: lodash vulnerable to Code Injection via `_.template` imports key names."
+    note: "Carried from 4.17.24-backpatch-00001; upstream's fix in 4.18.0 (879aaa9, 4f0e376, bbcb8a0). It closes the advisory: lodash vulnerable to Code Injection via `_.template` imports key names."
+  - cve: CVE-2026-2950
+    upstream_fix_url: https://github.com/lodash/lodash/commit/fe8d32eda854377349a4f922ab7655c8e5df9a0b
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-2950
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-lodash/commit/33c6fcc
+    basis: backport
+    artifacts:
+      - lodash
+    note: "New in this release; upstream's fix in 4.18.0 (fe8d32e, 4f0e376). It closes the advisory: lodash vulnerable to prototype pollution via array-path bypass in `_.unset`, `_.omit`, and `_.pullAt."
 tests:
-  commit: f11999a9dfc1a59238833c82158e48c0b92ee66f
+  commit: 33c6fcc4145817eaa54534a930d8e3a8a0c68e22
   command: npm pack --ignore-scripts, then node test/test.js <tested lodash.js> in a harness of upstream main's test tree at 879aaa93132d, each test recorded into the JUnit report
   runtime: Node.js v22.16.0, QUnit 2.4.1 with qunit-extras 3.0.0, macOS 27.2 arm64
-  report: lodash-4.17.24-backpatch-00001-tests.zip
-  report_sha256: 438fc258d0645c4329ab281c8c21af8d33cd466cd1c0b95f0f08d37451c583ee
+  report: lodash-4.17.24-backpatch-00002-tests.zip
+  report_sha256: e85ff2829981d855cb70dc58f9240beb79119c86136807ecd3d7408beaec13cb
   result: pass
-  note: "upstream main's test/test.js (QUnit, the test tree at 879aaa93132d with its own npm ci) on the tested commit's lodash.js at the tested commit: 3096 tests, 3096 passed, 0 failed, 0 skipped. The CVE tests (test/test.js), with this release's production lines reverted at the tested commit: 45 tests, 43 passed, 2 failed, 0 skipped; with them: 45 tests, 45 passed, 0 failed, 0 skipped. Built with no build step (lodash.min.js is tracked; checked to equal lodash.js re-minified with uglify-js 2.7.5 and main's options), npm pack --ignore-scripts in a directory named lodash, 1047 of npmjs's 1051 files for 4.17.23 are identical; the rest are lodash.js, lodash.min.js, package.json, template.js. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build. Upstream main's five CVE-2026-2950 tests (lodash.unset and lodash.omit, released in 00002) are left out of this counter's run and report: on a line without that fix they delete built-ins and abort QUnit."
+  note: "upstream main's test/test.js (QUnit, the test tree at 879aaa93132d with its own npm ci) on the tested commit's lodash.js at the tested commit: 3101 tests, 3101 passed, 0 failed, 0 skipped. The CVE tests (test/test.js), with this release's production lines reverted at the tested commit: 3 tests, 1 passed, 2 failed, 0 skipped; with them: 5 tests, 5 passed, 0 failed, 0 skipped. Built with no build step (lodash.min.js is tracked; checked to equal lodash.js re-minified with uglify-js 2.7.5 and main's options), npm pack --ignore-scripts in a directory named lodash, 1046 of npmjs's 1051 files for 4.17.23 are identical; the rest are _baseUnset.js, lodash.js, lodash.min.js, package.json, template.js. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
